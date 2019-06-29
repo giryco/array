@@ -12,6 +12,48 @@ removeByValue = (array = [], value = []) => {
     return array;
 }
 
+removeByKeyValue = (arrayOfObjects = [], keyValue = [], logicalOperator = 'or') => {
+    for (let lim = arrayOfObjects.length, i = 0; i < lim; i++) {
+        let count = 0;
+
+        for (let j = 0; j < keyValue.length; j++) {
+            const object = keyValue[j];
+            
+            for (const key in object) {
+                if (object.hasOwnProperty(key)) {
+                    const value = object[key];
+                    
+                    for (const keyFromArrayOfObjects in arrayOfObjects[i]) {
+                        if (arrayOfObjects[i].hasOwnProperty(keyFromArrayOfObjects)) {
+                            const valueFromArrayOfObjects = arrayOfObjects[i][keyFromArrayOfObjects];
+                            
+                            if (key === keyFromArrayOfObjects && value === valueFromArrayOfObjects) {
+                                count ++;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if (logicalOperator === 'or') {
+            if (count > 0) {
+                arrayOfObjects.splice(i, 1);
+                removeByKeyValue(arrayOfObjects, keyValue, logicalOperator);
+            }
+        } else if (logicalOperator === 'and') {
+            if (count === keyValue.length) {
+                arrayOfObjects.splice(i, 1);
+                removeByKeyValue(arrayOfObjects, keyValue, logicalOperator);
+            }
+        } else {
+            return 'Not a valid logical operator parameter';
+        }
+    }
+
+    return arrayOfObjects;
+}
+
 removeRepeatedValues = (array = []) => {
     for (let lim = array.length, i = 0; i < lim; i++) {
         let valueToCheck = array[i];
@@ -32,5 +74,6 @@ removeRepeatedValues = (array = []) => {
 
 module.exports = {
     removeByValue,
-    removeRepeatedValues
+    removeRepeatedValues,
+    removeByKeyValue
 }
